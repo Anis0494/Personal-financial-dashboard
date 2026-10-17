@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Executive Personal Finance Dashboard · Sep 2026</title>
+<style>
+:root {
+  --bg:#f6f7f9; --card:#ffffff; --text:#111827; --muted:#667085; --border:#e5e7eb;
+  --navy:#17223b; --blue:#4666ff; --teal:#2a9d8f; --amber:#d28c1f; --red:#c84630;
+  --green:#26855a; --soft:#eef1f6; --purple:#7c5ce5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+.shell{max-width:1280px;margin:0 auto;padding:28px}
+.header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:18px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--muted)}
+h1{margin:4px 0 5px;font-size:28px;line-height:1.15}
+.sub{color:var(--muted);font-size:13px}
+.badge{padding:8px 11px;border:1px solid var(--border);background:#fff;border-radius:999px;font-size:12px;white-space:nowrap}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(6,minmax(0,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+.kpi .label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.kpi .value{font-size:25px;font-weight:800;margin-top:5px}
+.kpi .note{font-size:11px;color:var(--muted);margin-top:4px}
+.main{grid-template-columns:1.35fr 1fr;margin-bottom:14px}
+.section-title{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:12px}
+.section-title h2{font-size:15px;margin:0}
+.section-title span{font-size:11px;color:var(--muted)}
+#trend{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.alerts{display:grid;gap:10px}
+.alert{padding:11px 12px;border-radius:12px;background:var(--soft);font-size:12px;line-height:1.45}
+.alert strong{display:block;margin-bottom:2px}
+.alert.red{border-left:4px solid var(--red)}
+.alert.amber{border-left:4px solid var(--amber)}
+.alert.green{border-left:4px solid var(--green)}
+.mid{grid-template-columns:1.25fr 1fr 1fr;margin-bottom:14px}
+.bar-row{display:grid;grid-template-columns:160px 1fr 95px;gap:10px;align-items:center;margin:10px 0}
+.bar-label{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{height:9px;border-radius:99px;background:#edf0f4;overflow:hidden}
+.fill{height:100%;border-radius:99px;background:var(--blue)}
+.amount{text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700}
+.status{font-size:10px;color:var(--muted);margin-left:5px}
+.stack{height:24px;display:flex;border-radius:8px;overflow:hidden;background:#edf0f4;margin:12px 0 8px}
+.stack>div{height:100%}
+.small-table{width:100%;border-collapse:collapse}
+.small-table th,.small-table td{padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;text-align:left}
+.small-table th{color:var(--muted);font-weight:700}
+.small-table td:last-child,.small-table th:last-child{text-align:right}
+.debt-row{display:flex;justify-content:space-between;gap:8px;margin:8px 0;font-size:12px}
+.debt-total{font-size:28px;font-weight:800;margin-top:4px}
+.progress{height:10px;background:#edf0f4;border-radius:999px;overflow:hidden;margin:10px 0}
+.progress>div{height:100%;background:var(--red);width:98.9%}
+.bottom{grid-template-columns:1.3fr 1fr;margin-bottom:14px}
+.decision-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.decision{padding:12px;border-radius:12px;background:var(--soft);font-size:12px;line-height:1.45}
+.decision .n{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px}
+.foot{color:var(--muted);font-size:11px;line-height:1.5}
+.pill{display:inline-block;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:700;background:#f1f3f6;color:#475467}
+.pill.pending{background:#fff3dc;color:#8a5a00}
+.pill.good{background:#e9f6ef;color:#17653f}
+.big{font-size:30px;font-weight:850}
+.muted{color:var(--muted)}
+@media(max-width:1000px){
+  .kpis{grid-template-columns:repeat(3,1fr)} .main,.mid,.bottom{grid-template-columns:1fr} .decision-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  .shell{padding:16px} .header{flex-direction:column} .kpis{grid-template-columns:1fr 1fr} .decision-grid{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:120px 1fr 78px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="header">
+    <div>
+      <div class="eyebrow">Personal CFO · Executive close</div>
+      <h1>Financial Performance Dashboard</h1>
+      <div class="sub">Actuals through September 2026 · CAD unless noted · prepared for household decision-making</div>
+    </div>
+    <div class="badge">September close · v2 reconciled</div>
+  </div>
+
+  <section class="grid kpis">
+    <div class="card kpi"><div class="label">Payroll · Sep</div><div class="value">$7,510</div><div class="note">2 Scotia payroll deposits</div></div>
+    <div class="card kpi"><div class="label">Bank withdrawals</div><div class="value">$11,091</div><div class="note">Gross cash outflow · not net spend</div></div>
+    <div class="card kpi"><div class="label">Known Sep spend</div><div class="value">$7,926</div><div class="note">After matching $910 boat reimbursements</div></div>
+    <div class="card kpi"><div class="label">Colombia</div><div class="value">$2,226</div><div class="note">Calendar September · Remitly</div></div>
+    <div class="card kpi"><div class="label">Card debt</div><div class="value">$5,932</div><div class="note">Latest statement balances</div></div>
+    <div class="card kpi"><div class="label">Net to Andrés · Sep</div><div class="value">$535</div><div class="note">$660 sent − $125 received</div></div>
+  </section>
+
+  <section class="grid main">
+    <div class="card">
+      <div class="section-title"><h2>Monthly cash pressure</h2><span>Jan–Sep 2026 · bank withdrawals</span></div>
+      <svg id="trend" viewBox="0 0 760 300" role="img" aria-label="Monthly withdrawals and estimated transfers to Andrés"></svg>
+      <div class="legend"><span><i class="dot" style="background:var(--navy)"></i>Total bank withdrawals</span><span>Recipient-level e-Transfer history is being rebuilt from Scotia screenshots; older Andrés estimates are no longer used.</span></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Executive signals</h2><span>Decision-oriented</span></div>
+      <div class="alerts">
+        <div class="alert red"><strong>Credit cards remain the first financial priority.</strong>Latest statement balances total about $5.93K. Purchase APRs are 25.99% and 21.99%, so high-interest debt still outranks new investing.</div>
+        <div class="alert green"><strong>The boat is now reconciled.</strong>GetMyBoat was $1,303.72 and $910 of 130/260 e-Transfers were friends paying their shares. Net cost currently attributed to you/household: $393.72.</div>
+        <div class="alert green"><strong>Direct September cash support to Andrés is now measurable.</strong>You sent $660 directly to Andrés and received $125 from him, for a net personal outflow of $535.</div>
+        <div class="alert amber"><strong>Only ~$561 of September incoming e-Transfers remain unmatched.</strong>These should be tied to birthday/shared expenses before we treat them as income or reduce a spending category.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid mid">
+    <div class="card">
+      <div class="section-title"><h2>September spend by management category</h2><span>Gross before reimbursement matching</span></div>
+      <div id="bars"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>Colombia · September</h2><span>$2,226 total</span></div>
+      <div class="stack" id="colStack"></div>
+      <table class="small-table" id="colTable"><thead><tr><th>Recipient / purpose</th><th>CAD</th></tr></thead><tbody></tbody></table>
+      <div class="foot" style="margin-top:10px">Isabella is treated as university + mortgage funding; small transport amounts may also be included.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>Debt & cost of debt</h2><span>Latest statements</span></div>
+      <div class="debt-total">$5,931.62</div>
+      <div class="progress"><div></div></div>
+      <div class="debt-row"><span>Passport Visa Infinite</span><strong>$4,932.40</strong></div>
+      <div class="debt-row"><span>Purchase APR</span><strong>25.99%</strong></div>
+      <div class="debt-row"><span>Scene+ Visa</span><strong>$999.22</strong></div>
+      <div class="debt-row"><span>Purchase APR</span><strong>21.99%</strong></div>
+      <div class="debt-row"><span>Sep interest + card fees</span><strong>~$238</strong></div>
+      <div class="foot" style="margin-top:10px">Balances are from statements with different cutoff dates, so this is a management estimate, not a same-day payoff quote.</div>
+    </div>
+  </section>
+
+  <section class="grid bottom">
+    <div class="card">
+      <div class="section-title"><h2>Reconciliation & data quality</h2><span>What is confirmed vs pending</span></div>
+      <table class="small-table">
+        <tbody>
+          <tr><td>Payroll income</td><td><span class="pill good">Confirmed</span></td><td>$7,509.70</td></tr>
+          <tr><td>Housing · The Selby</td><td><span class="pill good">Confirmed</span></td><td>$2,375.00</td></tr>
+          <tr><td>Remitly · calendar Sep</td><td><span class="pill good">Confirmed</span></td><td>$2,226.36</td></tr>
+          <tr><td>Boat reimbursements</td><td><span class="pill good">Matched</span></td><td>$910.00</td></tr>
+          <tr><td>GetMyBoat · net after friends</td><td><span class="pill good">Reconciled</span></td><td>$393.72</td></tr>
+          <tr><td>Other incoming e-Transfers</td><td><span class="pill pending">Needs match</span></td><td>~$561.00</td></tr>
+          <tr><td>CC1 Sep 17–30 transactions</td><td><span class="pill pending">Not yet available</span></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="section-title"><h2>September close</h2><span>Executive summary</span></div>
+      <div class="big">-$305.21</div>
+      <div class="muted" style="font-size:12px;margin:2px 0 12px">Closing chequing balance · Sep 29</div>
+      <div class="debt-row"><span>Gross deposits</span><strong>$10,836.13</strong></div>
+      <div class="debt-row"><span>Gross withdrawals</span><strong>$11,090.85</strong></div>
+      <div class="debt-row"><span>Overdraft cost</span><strong>$9.56</strong></div>
+      <div class="debt-row"><span>Direct to Andrés · calendar Sep</span><strong>$660 sent / $125 received</strong></div>
+      <div class="foot" style="margin-top:10px">Internal transfers and credit-card payments are treated as cash-flow movements, not consumption, to avoid double counting.</div>
+      <div class="alert green" style="margin-top:12px"><strong>October known pass-through:</strong> Andrés sent $700 toward the $707 Scotiabank-law-firm work-permit fee for his portion. Track gross legal cost at $707, reimbursement at $700, and personal net at $7 unless the remaining $7 is reimbursed later.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title"><h2>Decision center · next 30 days</h2><span>Highest-impact actions first</span></div>
+    <div class="decision-grid">
+      <div class="decision"><div class="n">01 · Debt</div><strong>Stop card interest leakage.</strong><br>Prioritize the 25.99% Passport balance first, while maintaining minimums on both cards.</div>
+      <div class="decision"><div class="n">02 · Reimbursements</div><strong>Boat: solved.</strong><br>$910 has been netted against the $1,303.72 boat charge. Continue matching the remaining ~$561 of September inflows.</div>
+      <div class="decision"><div class="n">03 · Household transfers</div><strong>Track gross and net separately.</strong><br>September: $660 sent directly to Andrés and $125 received from him, producing a $535 net outflow.</div>
+      <div class="decision"><div class="n">04 · Investing</div><strong>Keep S&P 500 as stage 2.</strong><br>Redirect the future debt-payment amount to investing only after high-interest card balances are eliminated.</div>
+    </div>
+  </section>
+
+  <div class="foot" style="margin-top:14px">
+    Management dashboard only. September boat reimbursements and direct Andrés transfers are reconciled from the Interac history supplied. Older recipient-level e-Transfer estimates are under review and are not used for decisions. October grocery tracking remains separate from this September close.
+  </div>
+</div>
+
+<script>
+const monthly = [{"month": "Jan", "withdrawals": 11041.65, "andres": 3100.0}, {"month": "Feb", "withdrawals": 10081.4, "andres": 5500.0}, {"month": "Mar", "withdrawals": 8229.79, "andres": 1678.57}, {"month": "Apr", "withdrawals": 12371.41, "andres": 2686.0}, {"month": "May", "withdrawals": 8024.94, "andres": 2500.0}, {"month": "Jun", "withdrawals": 9126.99, "andres": 1246.0}, {"month": "Jul", "withdrawals": 9555.13, "andres": 1410.0}, {"month": "Aug", "withdrawals": 7791.39, "andres": 507.0}, {"month": "Sep", "withdrawals": 11090.85, "andres": 565.0}];
+const categories = [{"name": "Housing", "value": 2375.0, "status": "confirmed"}, {"name": "Colombia", "value": 2226.36, "status": "confirmed"}, {"name": "Boat / recreation · net", "value": 393.72, "status": "confirmed"}, {"name": "Shopping", "value": 1014.35, "status": "provisional"}, {"name": "Dining & coffee", "value": 518.62, "status": "provisional"}, {"name": "Groceries", "value": 394.26, "status": "provisional"}, {"name": "Finance charges", "value": 247.73, "status": "confirmed"}, {"name": "Health", "value": 217.61, "status": "provisional"}, {"name": "Subscriptions", "value": 146.67, "status": "provisional"}, {"name": "Pets", "value": 127.85, "status": "provisional"}, {"name": "Transport", "value": 99.9, "status": "provisional"}, {"name": "Other / misc", "value": 91.48, "status": "provisional"}, {"name": "Phone", "value": 72.16, "status": "confirmed"}];
+const colombia = [{"name": "Isabella \u00b7 U + mortgage", "value": 1695.09}, {"name": "Natalia", "value": 249.58}, {"name": "Hilda", "value": 116.16}, {"name": "Other recipients", "value": 109.55}, {"name": "Martha", "value": 55.98}];
+const money = v => new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0}).format(v);
+
+// Trend SVG
+(() => {
+  const svg=document.getElementById('trend'), W=760,H=300,p={l:50,r:20,t:15,b:38};
+  const max=Math.max(...monthly.map(d=>d.withdrawals))*1.08;
+  const x=i=>p.l+i*((W-p.l-p.r)/(monthly.length-1));
+  const y=v=>H-p.b-(v/max)*(H-p.t-p.b);
+  let s='';
+  [0,3000,6000,9000,12000].forEach(t=>{
+    const yy=y(t);
+    s+=`<line x1="${p.l}" y1="${yy}" x2="${W-p.r}" y2="${yy}" stroke="#e5e7eb"/>`;
+    s+=`<text x="${p.l-8}" y="${yy+4}" text-anchor="end" font-size="10" fill="#667085">${t?Math.round(t/1000)+'k':'0'}</text>`;
+  });
+  const a=monthly.map((d,i)=>(i?'L':'M')+x(i)+','+y(d.withdrawals)).join(' ');
+  s+=`<path d="${a}" fill="none" stroke="#17223b" stroke-width="3"/>`;
+  monthly.forEach((d,i)=>{
+    s+=`<circle cx="${x(i)}" cy="${y(d.withdrawals)}" r="4" fill="#17223b"/>`;
+    s+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="11" fill="#667085">${d.month}</text>`;
+  });
+  svg.innerHTML=s;
+})();
+
+// Category bars
+(() => {
+  const host=document.getElementById('bars');
+  const max=Math.max(...categories.map(d=>d.value));
+  categories.forEach((d,i)=>{
+    const row=document.createElement('div');
+    row.className='bar-row';
+    const status = d.status==='pending' ? ' · pending' : (d.status==='provisional' ? ' · provisional' : '');
+    row.innerHTML=`<div class="bar-label" title="${d.name}">${d.name}<span class="status">${status}</span></div>
+      <div class="track"><div class="fill" style="width:${Math.max(2,d.value/max*100)}%;background:${d.status==='pending'?'#d28c1f':'#4666ff'}"></div></div>
+      <div class="amount">${money(d.value)}</div>`;
+    host.appendChild(row);
+  });
+})();
+
+// Colombia
+(() => {
+  const total=colombia.reduce((a,b)=>a+b.value,0);
+  const colors=['#4666ff','#2a9d8f','#7c5ce5','#d28c1f','#98a2b3'];
+  const stack=document.getElementById('colStack');
+  const tbody=document.querySelector('#colTable tbody');
+  colombia.forEach((d,i)=>{
+    const seg=document.createElement('div');
+    seg.style.width=(d.value/total*100)+'%';
+    seg.style.background=colors[i%colors.length];
+    seg.title=d.name+' '+money(d.value);
+    stack.appendChild(seg);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${d.name}</td><td>${money(d.value)}</td>`;
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+</body>
+</html>
