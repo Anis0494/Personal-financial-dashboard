@@ -81,8 +81,18 @@ h1{margin:4px 0 5px;font-size:28px;line-height:1.15}
       <h1>Financial Performance Dashboard</h1>
       <div class="sub">Actuals through September 2026 · CAD unless noted · prepared for household decision-making</div>
     </div>
-    <div class="badge">September close · v2 reconciled</div>
+    <div class="badge">September close · v3 executive</div>
   </div>
+
+  <section class="card" style="margin-bottom:14px">
+    <div class="section-title"><h2>Executive Summary</h2><span>September 2026 close</span></div>
+    <div class="decision-grid">
+      <div class="decision"><div class="n">Cash flow</div><strong>Payroll: $7.51K</strong><br>Known net spend currently tracks around $7.93K after boat reimbursements.</div>
+      <div class="decision"><div class="n">Debt</div><strong>$5.93K outstanding</strong><br>High-interest credit cards remain the first capital-allocation priority.</div>
+      <div class="decision"><div class="n">Structural commitments</div><strong>Housing + Colombia dominate</strong><br>These two categories account for the largest recurring monthly load.</div>
+      <div class="decision"><div class="n">Management action</div><strong>Control discretionary shopping</strong><br>September shopping was $1,014.35, concentrated in Browns, Winners, Amazon, Temu and Shein.</div>
+    </div>
+  </section>
 
   <section class="grid kpis">
     <div class="card kpi"><div class="label">Payroll · Sep</div><div class="value">$7,510</div><div class="note">2 Scotia payroll deposits</div></div>
@@ -112,8 +122,12 @@ h1{margin:4px 0 5px;font-size:28px;line-height:1.15}
 
   <section class="grid mid">
     <div class="card">
-      <div class="section-title"><h2>September spend by management category</h2><span>Gross before reimbursement matching</span></div>
+      <div class="section-title"><h2>September spend by management category</h2><span>Net where reimbursements are known</span></div>
       <div id="bars"></div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="section-title"><h2>Shopping · detailed breakdown</h2><span>$1,014.35 total</span></div>
+        <div id="shoppingBars"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -184,6 +198,14 @@ h1{margin:4px 0 5px;font-size:28px;line-height:1.15}
 const monthly = [{"month": "Jan", "withdrawals": 11041.65, "andres": 3100.0}, {"month": "Feb", "withdrawals": 10081.4, "andres": 5500.0}, {"month": "Mar", "withdrawals": 8229.79, "andres": 1678.57}, {"month": "Apr", "withdrawals": 12371.41, "andres": 2686.0}, {"month": "May", "withdrawals": 8024.94, "andres": 2500.0}, {"month": "Jun", "withdrawals": 9126.99, "andres": 1246.0}, {"month": "Jul", "withdrawals": 9555.13, "andres": 1410.0}, {"month": "Aug", "withdrawals": 7791.39, "andres": 507.0}, {"month": "Sep", "withdrawals": 11090.85, "andres": 565.0}];
 const categories = [{"name": "Housing", "value": 2375.0, "status": "confirmed"}, {"name": "Colombia", "value": 2226.36, "status": "confirmed"}, {"name": "Boat / recreation · net", "value": 393.72, "status": "confirmed"}, {"name": "Shopping", "value": 1014.35, "status": "provisional"}, {"name": "Dining & coffee", "value": 518.62, "status": "provisional"}, {"name": "Groceries", "value": 394.26, "status": "provisional"}, {"name": "Finance charges", "value": 247.73, "status": "confirmed"}, {"name": "Health", "value": 217.61, "status": "provisional"}, {"name": "Subscriptions", "value": 146.67, "status": "provisional"}, {"name": "Pets", "value": 127.85, "status": "provisional"}, {"name": "Transport", "value": 99.9, "status": "provisional"}, {"name": "Other / misc", "value": 91.48, "status": "provisional"}, {"name": "Phone", "value": 72.16, "status": "confirmed"}];
 const colombia = [{"name": "Isabella \u00b7 U + mortgage", "value": 1695.09}, {"name": "Natalia", "value": 249.58}, {"name": "Hilda", "value": 116.16}, {"name": "Other recipients", "value": 109.55}, {"name": "Martha", "value": 55.98}];
+const shopping = [
+  {"name":"Amazon","value":296.61},
+  {"name":"Winners","value":228.21},
+  {"name":"Browns","value":226.00},
+  {"name":"Temu","value":159.60},
+  {"name":"Shein","value":83.93},
+  {"name":"Hanji Gifts","value":20.00}
+];
 const money = v => new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD',maximumFractionDigits:0}).format(v);
 
 // Trend SVG
@@ -217,6 +239,22 @@ const money = v => new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD
     const status = d.status==='pending' ? ' · pending' : (d.status==='provisional' ? ' · provisional' : '');
     row.innerHTML=`<div class="bar-label" title="${d.name}">${d.name}<span class="status">${status}</span></div>
       <div class="track"><div class="fill" style="width:${Math.max(2,d.value/max*100)}%;background:${d.status==='pending'?'#d28c1f':'#4666ff'}"></div></div>
+      <div class="amount">${money(d.value)}</div>`;
+    host.appendChild(row);
+  });
+})();
+
+// Shopping breakdown
+(() => {
+  const host=document.getElementById('shoppingBars');
+  const max=Math.max(...shopping.map(d=>d.value));
+  const total=shopping.reduce((a,b)=>a+b.value,0);
+  shopping.forEach(d=>{
+    const row=document.createElement('div');
+    row.className='bar-row';
+    const pct=(d.value/total*100).toFixed(1)+'%';
+    row.innerHTML=`<div class="bar-label" title="${d.name}">${d.name}<span class="status"> · ${pct}</span></div>
+      <div class="track"><div class="fill" style="width:${Math.max(2,d.value/max*100)}%;background:#7c5ce5"></div></div>
       <div class="amount">${money(d.value)}</div>`;
     host.appendChild(row);
   });
